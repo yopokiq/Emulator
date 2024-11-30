@@ -1,9 +1,5 @@
 .black {
    background-color: black;
    color: white;
-   border: 1px solid black;  
    font-family: "Fixedsys 62";
-}
-.noBg {
-   border: none;
 }
