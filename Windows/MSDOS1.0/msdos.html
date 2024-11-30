@@ -19,6 +19,7 @@
         #input-container .black {
             display: flex;
             align-items: center; /* Vertically align the items in the center */
+            margin-top: 0; /* Remove any space above the input */
         }
 
         #input-container .black span {
@@ -32,14 +33,20 @@
             height: 30px; /* Increase height for better readability */
             padding: 2px;
             border: 1px solid #aaa;
+            margin: 0; /* Remove extra margin around the input field */
         }
 
         /* Output container style */
         #output-container {
             white-space: pre-wrap; /* Preserves whitespace and line breaks */
+            margin-top: 0; /* Remove extra margin at the top of the output */
+        }
+
+        .black {
+            color: #fff; /* Set text color to white for better visibility on black background */
         }
     </style>
-    <title>MS-DOS 1.0 Emulator (IBM PC)</title>
+    <title>MS-DOS 1.0 Emulator</title>
 </head>
 <body class="black">
     <div class="black">
@@ -51,7 +58,7 @@
     <div id="input-container">
         <div class="black">
             <span>A:&gt;</span> <!-- No longer editable -->
-            <div contenteditable="true" id="userInput"><br></div> <!-- Editable part -->
+            <div contenteditable="true" id="userInput"></div> <!-- Editable part -->
         </div>
     </div>
 
