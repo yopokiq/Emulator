@@ -28,7 +28,9 @@
         #input-container .black span {
             margin-right: 5px; /* Add some space between the span and the contenteditable div */
         }
-
+        div[contenteditable="true"] {
+            height: 30px;
+        }
         #input-container .black div[contenteditable="true"] {
             display: inline-block; /* Ensure it stays on the same line as the span */
             width: auto; /* Let it adjust based on content */
