@@ -29,20 +29,24 @@
             display: inline-block; /* Ensure it stays on the same line as the span */
             width: auto; /* Let it adjust based on content */
             min-width: 50px; /* Minimum width for the editable area */
-            height: 20px; /* Height to match the line-height of the text */
+            height: 30px; /* Increase height for better readability */
+            padding: 2px;
+            border: 1px solid #aaa;
         }
     </style>
     <title>MS-DOS 1.0 Emulator</title>
 </head>
 <body class="black">
-    <div id="output-container" class="black">
+    <div class="black">
         MS-DOS Version 1.0<br>
         Copyright (C) Microsoft Corp 1981<br>
+    </div>
+    <div id="output-container" class="black">
     </div>
     <div id="input-container">
         <div class="black">
             <span>A:&gt;</span> <!-- No longer editable -->
-            <div contenteditable="true"><br></div> <!-- Editable part -->
+            <div contenteditable="true" id="userInput"><br></div> <!-- Editable part -->
         </div>
     </div>
 
@@ -69,6 +73,31 @@
         
         // Optional: Re-check theme change dynamically if the user switches between dark/light mode
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
+    </script>
+
+    <script>
+        let files = [
+            {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "COMMAND.COM", "content": "<system-code-placeholder>"}
+        ];
+
+        userInput = document.getElementById("userInput");
+        outputContainer = document.getElementById("output-container");
+
+        document.getElementById("userInput").addEventListener('keydown', function(event) {
+            if (event.key === "Enter") {
+                if (userInput.innerText.trim() === "DIR") {
+                    let fileList = files.map(file => file.filename).join("\n");
+                    outputContainer.textContent = fileList;
+                } else if (userInput.innerText.trim() === "VER") {
+                    outputContainer.textContent = "MS-DOS version 1.00";
+                } else {
+                    outputContainer.textContent = "Bad command or file name";
+                }
+                event.preventDefault(); // Prevent the default behavior (like adding a newline in the input)
+            }
+        });
     </script>
 </body>
 </html>
