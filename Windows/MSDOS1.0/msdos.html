@@ -55,32 +55,9 @@
     .black-square a:hover {
       text-decoration: underline;
     }
-
-    input {
-      font-family: "Fixedsys 62";
-      font-size: 62px;
-      border: none;
-      background-color: transparent;
-      color: white;
-      outline: none;
+   input {
+        font-family: "Fixedsys 62";
     }
-
-    /* Container to hold the 'A:>' text and the input field */
-    .input-wrapper {
-      display: flex;
-      align-items: center;
-      color: white;
-      font-family: "Fixedsys 62";
-      font-size: 62px;
-    }
-
-    /* Uneditable prefix */
-    .input-wrapper::before {
-      content: "A:>";
-      margin-right: 10px;
-      color: green; /* or any color you like */
-    }
-
   </style>
 </head>
 
@@ -95,9 +72,7 @@ Copyright (C) 1981 Microsoft Corp.
         </p>
       </div>
       <div id="input-container" class="black">
-        <div class="input-wrapper">
-          <input type="text" class="black" id="user-input">
-        </div>
+        <textarea class="black"></textarea>
       </div>
     </div>
   </div>
