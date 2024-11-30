@@ -1,65 +1,62 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png"> <!-- Default (light mode) -->
+  <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png">
   <title>Square Example</title>
-
-  <!-- External Stylesheets -->
   <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
   <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
 
   <style>
-    /* General body settings */
     body {
       margin: 0;
-      background-color: #f0f0f0; /* Light background to represent a workspace */
+      background-color: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
 
-    /* Style for the 'monitor' container */
     .grey-square {
-      width: 300px; /* Make the monitor bigger */
+      width: 300px;
       height: 250px;
-      background-color: #e3e1e1; /* Light grey color for monitor */
-      border: 10px solid #666; /* Darker border for monitor frame */
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Subtle shadow to look like a monitor */
+      background-color: #e3e1e1;
+      border: 10px solid #666;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
       display: flex;
-      justify-content: center; /* Center the screen */
-      align-items: center; /* Center the screen vertically */
-      border-radius: 10px; /* Rounded corners for a sleek look */
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
     }
 
-    /* Screen area inside the monitor */
     .black-square {
-      width: 90%; /* Make the screen slightly smaller than the monitor */
+      width: 90%;
       height: 90%;
-      background-color: black; /* Black screen */
-      border-radius: 8px; /* Slight rounding for the screen */
+      background-color: black;
+      border-radius: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
       color: white;
-      font-family: "Fixedsys 62"; /* Fixedsys 62 font */
-      font-size: 16px;
-      position: relative; /* Needed for positioning of the links */
+      font-family: "Fixedsys 62";
+      font-size: 62px;
+      position: relative;
     }
 
-    /* Links inside the black square */
-    .black-square link, .black-square a {
+    .black-square a {
       position: absolute;
       bottom: 10px;
-      color: #00ff00; /* Green text like a retro terminal */
+      color: #000000;
       font-size: 12px;
       text-decoration: none;
     }
 
-    .black-square link:hover, .black-square a:hover {
+    .black-square a:hover {
       text-decoration: underline;
+    }
+   input {
+        font-family: "Fixedsys 62";
     }
   </style>
 </head>
@@ -71,35 +68,19 @@
       <div id="input-container" class="black">
         <input type="text" class="black">
       </div>
-
-      <!-- The links will be placed here, within the black square -->
-      <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
-      <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
     </div>
   </div>
 
   <script>
-    // Function to check the theme preference and set the favicon accordingly
     function setFaviconBasedOnTheme() {
-      const darkModeFavicon = "https://iili.io/207HCAu.png"; // Favicon for dark mode
-      const lightModeFavicon = "https://iili.io/205OIEP.png"; // Favicon for light mode
+      const darkModeFavicon = "https://iili.io/207HCAu.png";
+      const lightModeFavicon = "https://iili.io/205OIEP.png";
       const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      // Select the favicon element
       const favicon = document.getElementById('favicon');
-
-      // Change the favicon based on the theme
-      if (isDarkMode) {
-        favicon.href = darkModeFavicon;
-      } else {
-        favicon.href = lightModeFavicon;
-      }
+      favicon.href = isDarkMode ? darkModeFavicon : lightModeFavicon;
     }
 
-    // Call the function to set the favicon when the page loads
     setFaviconBasedOnTheme();
-
-    // Optional: Re-check theme change dynamically if the user switches between dark/light mode
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
   </script>
 </body>
