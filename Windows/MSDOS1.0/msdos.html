@@ -15,8 +15,6 @@
         user-select: none; /* Prevents text selection */
         display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
         align-items: center; /* Vertically align the text inside the span */
-        height: 30px; /* Set the same height as the contenteditable div */
-        line-height: 30px; /* Ensure vertical alignment of the text */
         margin-right: 5px; /* Add some space between the span and the contenteditable div */
         box-sizing: border-box; /* Include padding and border in height calculation */
     }
@@ -31,8 +29,6 @@
     #input-container .black div[contenteditable="true"] {
         display: inline-block; /* Ensures it stays on the same line as the span */
         min-width: 50px; /* Minimum width for the editable area */
-        height: 30px; /* Match the height of the span */
-        line-height: 30px; /* Ensure vertical alignment of text inside the editable div */
         padding: 2px;
         border: 1px solid #aaa;
         margin: 0; /* Remove extra margin around the input field */
@@ -51,15 +47,15 @@
     }
 
     div[contenteditable="true"] {
-        height: 30px;
-        line-height: 30px; /* Ensure the text inside the editable div is vertically centered */
         box-sizing: border-box; /* Include padding and border in height calculation */
     }
+
     #input-container .black div[contenteditable="true"] {
-    margin: 0;
-    padding: 0;
-}
+        margin: 0;
+        padding: 0;
+    }
 </style>
+
 
     <title>MS-DOS 1.0 Emulator</title>
 </head>
