@@ -5,50 +5,57 @@
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
     <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png"> <!-- Default (light mode) -->
     <style>
-        html, body, div, input {
-            font-family: "Fixedsys 62";
-        }
+    html, body, div, input {
+        font-family: "Fixedsys 62";
+    }
 
-        /* Prevent editing the span inside contenteditable div */
-        #input-container .black span {
-            pointer-events: none; /* Disables click/touch interaction */
-            user-select: none; /* Prevents text selection */
-            display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
-            align-items: center; /* Vertically align the text inside the span */
-            height: 30px; /* Set the same height as the contenteditable div */
-            margin-right: 5px; /* Add some space between the span and the contenteditable div */
-        }
+    /* Prevent editing the span inside contenteditable div */
+    #input-container .black span {
+        pointer-events: none; /* Disables click/touch interaction */
+        user-select: none; /* Prevents text selection */
+        display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
+        align-items: center; /* Vertically align the text inside the span */
+        height: 30px; /* Set the same height as the contenteditable div */
+        line-height: 30px; /* Ensure vertical alignment of the text */
+        margin-right: 5px; /* Add some space between the span and the contenteditable div */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
 
-        /* Ensure the span and contenteditable div are on the same line */
-        #input-container .black {
-            display: inline-flex; /* Align elements in a row */
-            align-items: center; /* Vertically align the span and the editable div */
-        }
+    /* Ensure the span and contenteditable div are on the same line */
+    #input-container .black {
+        display: inline-flex; /* Align elements in a row */
+        align-items: center; /* Vertically align the span and the editable div */
+    }
 
-        /* Make the editable div inline-block and align it with the span */
-        #input-container .black div[contenteditable="true"] {
-            display: inline-block; /* Ensures it stays on the same line as the span */
-            min-width: 50px; /* Minimum width for the editable area */
-            height: 30px; /* Match the height of the span */
-            padding: 2px;
-            border: 1px solid #aaa;
-            margin: 0; /* Remove extra margin around the input field */
-            vertical-align: middle; /* Ensure vertical alignment */
-        }
+    /* Make the editable div inline-block and align it with the span */
+    #input-container .black div[contenteditable="true"] {
+        display: inline-block; /* Ensures it stays on the same line as the span */
+        min-width: 50px; /* Minimum width for the editable area */
+        height: 30px; /* Match the height of the span */
+        line-height: 30px; /* Ensure vertical alignment of text inside the editable div */
+        padding: 2px;
+        border: 1px solid #aaa;
+        margin: 0; /* Remove extra margin around the input field */
+        vertical-align: middle; /* Ensure vertical alignment */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
 
-        /* Output container style */
-        #output-container {
-            white-space: pre-wrap; /* Preserves whitespace and line breaks */
-            margin-top: 0; /* Remove extra margin at the top of the output */
-        }
+    /* Output container style */
+    #output-container {
+        white-space: pre-wrap; /* Preserves whitespace and line breaks */
+        margin-top: 0; /* Remove extra margin at the top of the output */
+    }
 
-        .black {
-            color: #fff; /* Set text color to white for better visibility on black background */
-        }
-        div[contenteditable="true"] {
-            height: 30px;
-        }
-    </style>
+    .black {
+        color: #fff; /* Set text color to white for better visibility on black background */
+    }
+
+    div[contenteditable="true"] {
+        height: 30px;
+        line-height: 30px; /* Ensure the text inside the editable div is vertically centered */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
+</style>
     <title>MS-DOS 1.0 Emulator</title>
 </head>
 <body class="black">
