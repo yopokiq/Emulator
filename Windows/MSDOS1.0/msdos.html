@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png">
-  <title>MS-DOS 1.0 Emulator</title> 
+  <title>MS-DOS 1.0 Emulator</title>
   <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
   <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
 
@@ -55,9 +55,32 @@
     .black-square a:hover {
       text-decoration: underline;
     }
-   input {
-        font-family: "Fixedsys 62";
+
+    input {
+      font-family: "Fixedsys 62";
+      font-size: 62px;
+      border: none;
+      background-color: transparent;
+      color: white;
+      outline: none;
     }
+
+    /* Container to hold the 'A:>' text and the input field */
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      color: white;
+      font-family: "Fixedsys 62";
+      font-size: 62px;
+    }
+
+    /* Uneditable prefix */
+    .input-wrapper::before {
+      content: "A:>";
+      margin-right: 10px;
+      color: green; /* or any color you like */
+    }
+
   </style>
 </head>
 
@@ -69,11 +92,12 @@
 Microsoft Disk Operating System
 Version 1.0
 Copyright (C) 1981 Microsoft Corp.
-
         </p>
       </div>
       <div id="input-container" class="black">
-        <input type="text" class="black">
+        <div class="input-wrapper">
+          <input type="text" class="black" id="user-input">
+        </div>
       </div>
     </div>
   </div>
