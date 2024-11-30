@@ -13,6 +13,9 @@
         #input-container .black span {
             pointer-events: none; /* Disables click/touch interaction */
             user-select: none; /* Prevents text selection */
+            height: 30px; /* Set the same height as the contenteditable div */
+            display: flex;
+            align-items: center; /* Vertically align the text inside the span */
         }
 
         /* Ensure the span and contenteditable div are on the same line */
@@ -30,7 +33,7 @@
             display: inline-block; /* Ensure it stays on the same line as the span */
             width: auto; /* Let it adjust based on content */
             min-width: 50px; /* Minimum width for the editable area */
-            height: 30px; /* Increase height for better readability */
+            height: 30px; /* Set height to match the span */
             padding: 2px;
             border: 1px solid #aaa;
             margin: 0; /* Remove extra margin around the input field */
