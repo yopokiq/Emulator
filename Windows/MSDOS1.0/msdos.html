@@ -1,93 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png">
-  <title>MS-DOS 1.0 Emulator</title>
-  <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
-  <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
-
-  <style>
-    body {
-      margin: 0;
-      background-color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .grey-square {
-      width: 300px;
-      height: 250px;
-      background-color: #e3e1e1;
-      border: 10px solid #666;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 10px;
-    }
-
-    .black-square {
-      width: 90%;
-      height: 90%;
-      background-color: black;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-family: "Fixedsys 62";
-      font-size: 62px;
-      position: relative;
-    }
-
-    .black-square a {
-      position: absolute;
-      bottom: 10px;
-      color: #000000;
-      font-size: 12px;
-      text-decoration: none;
-    }
-
-    .black-square a:hover {
-      text-decoration: underline;
-    }
-   input {
-        font-family: "Fixedsys 62";
-    }
-  </style>
-</head>
-
-<body>
-  <div class="grey-square">
-    <div class="black-square">
-      <div id="output-container" class="black">
-        <p>
-Microsoft Disk Operating System
-Version 1.0
-Copyright (C) 1981 Microsoft Corp.
-        </p>
-      </div>
-      <div id="input-container" class="black">
-        <textarea class="black"></textarea>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function setFaviconBasedOnTheme() {
-      const darkModeFavicon = "https://iili.io/207HCAu.png";
-      const lightModeFavicon = "https://iili.io/205OIEP.png";
-      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const favicon = document.getElementById('favicon');
-      favicon.href = isDarkMode ? darkModeFavicon : lightModeFavicon;
-    }
-
-    setFaviconBasedOnTheme();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
-  </script>
-</body>
+    <head>
+        <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css"></link>
+        <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css"></link>
+        <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png"> <!-- Default (light mode) -->
+        <style>
+            html, body, div, input {
+                font-family: "Fixedsys 62";
+            }
+        </style>
+        <title>MS-DOS 1.0 Emulator</title>
+    </head>
+    <body class="black"> 
+        <div id="output-container" class="black"></div>
+        <div id="input-container" class="black">
+            <input type="text" class="black">
+        </div>
+        <script>
+            // Function to check the theme preference and set the favicon accordingly
+            function setFaviconBasedOnTheme() {
+                const darkModeFavicon = "https://iili.io/207HCAu.png"; // Favicon for dark mode
+                const lightModeFavicon = "https://iili.io/205OIEP.png"; // Favicon for light mode
+                const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                
+                // Select the favicon element
+                const favicon = document.getElementById('favicon');
+                
+                // Change the favicon based on the theme
+                if (isDarkMode) {
+                    favicon.href = darkModeFavicon;
+                } else {
+                    favicon.href = lightModeFavicon;
+                }
+            }
+            
+            // Call the function to set the favicon when the page loads
+            setFaviconBasedOnTheme();
+            
+            // Optional: Re-check theme change dynamically if the user switches between dark/light mode
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
+        </script>
+    </body>
 </html>
