@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css"</link>
-        <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css"</link>
-        <link rel="icon" href="https://iili.io/205OIEP.png" type="image/png">
-        
+        <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css"></link>
+        <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css"></link>
+        <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png"> <!-- Default (light mode) -->
         <style>
             html, body, div, input {
                 font-family: "Fixedsys 62";
@@ -13,14 +12,34 @@
         <title>MS-DOS 1.0 Emulator</title>
     </head>
     <body class="black"> 
-        <div id="output-container" class="black">
-
-        </div>
+        <div id="output-container" class="black"></div>
         <div id="input-container" class="black">
             <input type="text" class="black">
         </div>
-        <style>
+        <script>
+            // Function to check the theme preference and set the favicon accordingly
+            function setFaviconBasedOnTheme() {
+                const darkModeFavicon = "https://iili.io/207HCAu.png"; // Favicon for dark mode
+                const lightModeFavicon = "https://iili.io/205OIEP.png"; // Favicon for light mode
+                const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                
+                // Select the favicon element
+                const favicon = document.getElementById('favicon');
+                
+                // Change the favicon based on the theme
+                if (isDarkMode) {
+                    favicon.href = darkModeFavicon;
+                } else {
+                    favicon.href = lightModeFavicon;
+                }
+            }
             
-        </style>
+            // Call the function to set the favicon when the page loads
+            setFaviconBasedOnTheme();
+            
+            // Optional: Re-check theme change dynamically if the user switches between dark/light mode
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
+        </script>
     </body>
 </html>
+
