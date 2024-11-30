@@ -1,6 +1,6 @@
 .black {
    background-color: black;
    color: white;
-   border: black;
+   border: 1px solid black;  
    font-family: "Fixedsys 62";
 }
