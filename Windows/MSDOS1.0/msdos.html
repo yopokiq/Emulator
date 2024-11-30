@@ -13,32 +13,27 @@
         #input-container .black span {
             pointer-events: none; /* Disables click/touch interaction */
             user-select: none; /* Prevents text selection */
-            height: 30px; /* Set the same height as the contenteditable div */
-            display: flex;
+            display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
             align-items: center; /* Vertically align the text inside the span */
+            height: 30px; /* Set the same height as the contenteditable div */
+            margin-right: 5px; /* Add some space between the span and the contenteditable div */
         }
 
         /* Ensure the span and contenteditable div are on the same line */
         #input-container .black {
-            display: flex;
-            align-items: center; /* Vertically align the items in the center */
-            margin-top: 0; /* Remove any space above the input */
+            display: inline-flex; /* Align elements in a row */
+            align-items: center; /* Vertically align the span and the editable div */
         }
 
-        #input-container .black span {
-            margin-right: 5px; /* Add some space between the span and the contenteditable div */
-        }
-        div[contenteditable="true"] {
-            height: 30px;
-        }
+        /* Make the editable div inline-block and align it with the span */
         #input-container .black div[contenteditable="true"] {
-            display: inline-block; /* Ensure it stays on the same line as the span */
-            width: auto; /* Let it adjust based on content */
+            display: inline-block; /* Ensures it stays on the same line as the span */
             min-width: 50px; /* Minimum width for the editable area */
-            height: 30px; /* Set height to match the span */
+            height: 30px; /* Match the height of the span */
             padding: 2px;
             border: 1px solid #aaa;
             margin: 0; /* Remove extra margin around the input field */
+            vertical-align: middle; /* Ensure vertical alignment */
         }
 
         /* Output container style */
