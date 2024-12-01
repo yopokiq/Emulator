@@ -3,54 +3,59 @@
 <head>
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
-    <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png">
-    <style>
-        html, body, div, input {
-            font-family: "Fixedsys 62";
-        }
+    <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png"> <!-- Default (light mode) -->
+<style>
+    html, body, div, input {
+        font-family: "Fixedsys 62";
+    }
 
-        #input-container .black span {
-            pointer-events: none;
-            user-select: none;
-            display: inline-flex;
-            align-items: center;
-            margin-right: 5px;
-            box-sizing: border-box;
-        }
+    /* Prevent editing the span inside contenteditable div */
+    #input-container .black span {
+        pointer-events: none; /* Disables click/touch interaction */
+        user-select: none; /* Prevents text selection */
+        display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
+        align-items: center; /* Vertically align the text inside the span */
+        margin-right: 5px; /* Add some space between the span and the contenteditable div */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
 
-        #input-container .black {
-            display: inline-flex;
-            align-items: center;
-        }
+    /* Ensure the span and contenteditable div are on the same line */
+    #input-container .black {
+        display: inline-flex; /* Align elements in a row */
+        align-items: center; /* Vertically align the span and the editable div */
+    }
 
-        #input-container .black div[contenteditable="true"] {
-            display: inline-block;
-            min-width: 50px;
-            padding: 2px;
-            border: 1px solid #aaa;
-            margin: 0;
-            vertical-align: middle;
-            box-sizing: border-box;
-        }
+    /* Make the editable div inline-block and align it with the span */
+    #input-container .black div[contenteditable="true"] {
+        display: inline-block; /* Ensures it stays on the same line as the span */
+        min-width: 50px; /* Minimum width for the editable area */
+        padding: 2px;
+        border: 1px solid #aaa;
+        margin: 0; /* Remove extra margin around the input field */
+        vertical-align: middle; /* Ensure vertical alignment */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
 
-        #output-container {
-            white-space: pre-wrap;
-            margin-top: 0;
-        }
+    /* Output container style */
+    #output-container {
+        white-space: pre-wrap; /* Preserves whitespace and line breaks */
+        margin-top: 0; /* Remove extra margin at the top of the output */
+    }
 
-        .black {
-            color: #fff;
-        }
+    .black {
+        color: #fff; /* Set text color to white for better visibility on black background */
+    }
 
-        div[contenteditable="true"] {
-            box-sizing: border-box;
-        }
+    div[contenteditable="true"] {
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
 
-        #input-container .black div[contenteditable="true"] {
-            margin: 0;
-            padding: 0;
-        }
-    </style>
+    #input-container .black div[contenteditable="true"] {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
 
     <title>MS-DOS 1.0 Emulator</title>
 </head>
@@ -62,87 +67,69 @@
     <div id="output-container" class="black"></div>
     <div id="input-container">
         <div class="black">
-            <span>A:&gt;</span> 
-            <div contenteditable="true" id="userInput"></div>
+            <span>A:&gt;</span> <!-- No longer editable -->
+            <div contenteditable="true" id="userInput"></div> <!-- Editable part -->
         </div>
     </div>
 
     <script>
-        let files = {
-            "A:\\": [
-                {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
-                {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
-                {"filename": "COMMAND.COM", "content": "<system-code-placeholder>"}
-            ]
-        };
+        // Function to check the theme preference and set the favicon accordingly
+        function setFaviconBasedOnTheme() {
+            const darkModeFavicon = "https://iili.io/207HCAu.png"; // Favicon for dark mode
+            const lightModeFavicon = "https://iili.io/205OIEP.png"; // Favicon for light mode
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Select the favicon element
+            const favicon = document.getElementById('favicon');
+            
+            // Change the favicon based on the theme
+            if (isDarkMode) {
+                favicon.href = darkModeFavicon;
+            } else {
+                favicon.href = lightModeFavicon;
+            }
+        }
+        
+        // Call the function to set the favicon when the page loads
+        setFaviconBasedOnTheme();
+        
+        // Optional: Re-check theme change dynamically if the user switches between dark/light mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
+    </script>
 
-        let currentDir = "A:\\";  // Default starting directory
+    <script>
+        let files = [
+            {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "COMMAND.COM", "content": "<system-code-placeholder>"}
+        ];
 
         userInput = document.getElementById("userInput");
         outputContainer = document.getElementById("output-container");
-
-        function printOutput(output) {
-            outputContainer.textContent += output + "\n";
-            outputContainer.scrollTop = outputContainer.scrollHeight; // Auto scroll
-        }
 
         document.getElementById("userInput").addEventListener('keydown', function(event) {
             if (event.key === "Enter") {
                 let inputText = userInput.innerText.trim();
                 let commandOutput = '';
 
-                // Parsing user input
-                let [command, ...args] = inputText.split(" ");
-                command = command.toUpperCase();
-                args = args.join(" ").trim();
-
-                switch (command) {
-                    case "DIR":
-                        commandOutput = "Directory of " + currentDir + "\n";
-                        commandOutput += "No label\n";
-                        commandOutput += "Directory of " + currentDir + "\n";
-                        files[currentDir].forEach(file => {
-                            commandOutput += file.filename + "\n";
-                        });
-                        break;
-                    case "VER":
-                        commandOutput = "MS-DOS version 1.0";
-                        break;
-                    case "COPY":
-                        if (args) {
-                            let [src, dest] = args.split(" ");
-                            src = src.trim();
-                            dest = dest.trim();
-                            if (files[currentDir].some(file => file.filename === src)) {
-                                files[currentDir].push({ "filename": dest, "content": "<copied-content>" });
-                                commandOutput = `File ${src} copied to ${dest}`;
-                            } else {
-                                commandOutput = "File not found.";
-                            }
-                        } else {
-                            commandOutput = "Invalid syntax. Usage: COPY [source] [destination]";
-                        }
-                        break;
-                    case "DEL":
-                        if (args) {
-                            let fileIndex = files[currentDir].findIndex(file => file.filename === args);
-                            if (fileIndex !== -1) {
-                                files[currentDir].splice(fileIndex, 1);
-                                commandOutput = `Deleted ${args}`;
-                            } else {
-                                commandOutput = "File not found.";
-                            }
-                        } else {
-                            commandOutput = "Invalid syntax. Usage: DEL [filename]";
-                        }
-                        break;
-                    default:
-                        commandOutput = "Bad command or file name";
+                if (inputText === "DIR") {
+                    commandOutput = [
+                        "Directory of A has no label",
+                        "Directory of A:\\",
+                        ...files.map(file => file.filename)
+                    ].join("\n");
+                } else if (inputText === "VER") {
+                    commandOutput = "MS-DOS version 1.0";
+                } else {
+                    commandOutput = "Bad command or file name";
                 }
 
                 // Append the user's command and output to the output container
-                printOutput(`A:> ${inputText}\n${commandOutput}\n`);
-                userInput.innerText = ''; // Clear input field for new input
+                outputContainer.textContent += A:> ${inputText}\n${commandOutput}\n;
+
+                // Clear the input field for new input
+                userInput.innerText = '';
+
                 event.preventDefault(); // Prevent the default behavior (like adding a newline in the input)
             }
         });
