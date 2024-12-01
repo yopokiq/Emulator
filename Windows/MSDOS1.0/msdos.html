@@ -9,15 +9,7 @@
         font-family: "Fixedsys 62";
     }
 
-    /* Prevent editing the span inside contenteditable div */
-    #input-container .black span {
-        pointer-events: none; /* Disables click/touch interaction */
-        user-select: none; /* Prevents text selection */
-        display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
-        align-items: center; /* Vertically align the text inside the span */
-        margin-right: 5px; /* Add some space between the span and the contenteditable div */
-        box-sizing: border-box; /* Include padding and border in height calculation */
-    }
+ 
 
     /* Ensure the span and contenteditable div are on the same line */
     #input-container .black {
@@ -26,23 +18,7 @@
     }
 
     /* Make the editable div inline-block and align it with the span */
-    #input-container .black div[contenteditable="true"] {
-        display: inline-block; /* Ensures it stays on the same line as the span */
-        min-width: 50px; /* Minimum width for the editable area */
-        padding: 2px;
-        border: 1px solid #aaa;
-        margin: 0; /* Remove extra margin around the input field */
-        vertical-align: middle; /* Ensure vertical alignment */
-        box-sizing: border-box; /* Include padding and border in height calculation */
-    }
-
-    /* Output container style */
-    #output-container {
-        white-space: pre-wrap; /* Preserves whitespace and line breaks */
-        margin-top: 0; /* Remove extra margin at the top of the output */
-    }
-
-    .black {
+      .black {
         color: #fff; /* Set text color to white for better visibility on black background */
     }
 
