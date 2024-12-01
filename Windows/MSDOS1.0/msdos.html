@@ -9,7 +9,15 @@
         font-family: "Fixedsys 62";
     }
 
- 
+    /* Prevent editing the span inside contenteditable div */
+    #input-container .black span {
+        pointer-events: none; /* Disables click/touch interaction */
+        user-select: none; /* Prevents text selection */
+        display: inline-flex; /* Ensure the span behaves like inline-flex for alignment */
+        align-items: center; /* Vertically align the text inside the span */
+        margin-right: 5px; /* Add some space between the span and the contenteditable div */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
 
     /* Ensure the span and contenteditable div are on the same line */
     #input-container .black {
@@ -18,7 +26,23 @@
     }
 
     /* Make the editable div inline-block and align it with the span */
-      .black {
+    #input-container .black div[contenteditable="true"] {
+        display: inline-block; /* Ensures it stays on the same line as the span */
+        min-width: 50px; /* Minimum width for the editable area */
+        padding: 2px;
+        border: 1px solid #aaa;
+        margin: 0; /* Remove extra margin around the input field */
+        vertical-align: middle; /* Ensure vertical alignment */
+        box-sizing: border-box; /* Include padding and border in height calculation */
+    }
+
+    /* Output container style */
+    #output-container {
+        white-space: pre-wrap; /* Preserves whitespace and line breaks */
+        margin-top: 0; /* Remove extra margin at the top of the output */
+    }
+
+    .black {
         color: #fff; /* Set text color to white for better visibility on black background */
     }
 
@@ -31,6 +55,7 @@
         padding: 0;
     }
 </style>
+
 
     <title>MS-DOS 1.0 Emulator</title>
 </head>
@@ -81,16 +106,13 @@
 
         userInput = document.getElementById("userInput");
         outputContainer = document.getElementById("output-container");
-        
+
         document.getElementById("userInput").addEventListener('keydown', function(event) {
             if (event.key === "Enter") {
-                let inputText = userInput.innerText.trim(); // Trim input to check for empty or whitespace input
+                let inputText = userInput.innerText.trim();
                 let commandOutput = '';
 
-                // Check if input is empty or contains only whitespace
-                if (inputText === "") {
-                    commandOutput = "";
-                } else if (inputText === "DIR") {
+                if (inputText === "DIR") {
                     commandOutput = [
                         "Directory of A has no label",
                         "Directory of A:\\",
@@ -98,7 +120,11 @@
                     ].join("\n");
                 } else if (inputText === "VER") {
                     commandOutput = "MS-DOS version 1.0";
-                } else {
+                }
+                else if (inputText.trim() == "") {
+                    commandOutput = "A:>";
+                }
+                else {
                     commandOutput = "Bad command or file name";
                 }
 
@@ -114,4 +140,3 @@
     </script>
 </body>
 </html>
-
