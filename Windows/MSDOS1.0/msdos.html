@@ -106,33 +106,32 @@
 
         userInput = document.getElementById("userInput");
         outputContainer = document.getElementById("output-container");
-
         document.getElementById("userInput").addEventListener('keydown', function(event) {
-            if (event.key === "Enter") {
-                let inputText = userInput.innerText.trim();
-                let commandOutput = '';
+    if (event.key === "Enter") {
+        let inputText = userInput.innerText.trim();
+        let commandOutput = '';
 
-                if (inputText === "DIR") {
-                    commandOutput = [
-                        "Directory of A has no label",
-                        "Directory of A:\\",
-                        ...files.map(file => file.filename)
-                    ].join("\n");
-                } else if (inputText === "VER") {
-                    commandOutput = "MS-DOS version 1.0";
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
+        if (inputText === "DIR") {
+            commandOutput = [
+                "Directory of A has no label",
+                "Directory of A:\\",
+                ...files.map(file => file.filename)
+            ].join("\n");
+        } else if (inputText === "VER") {
+            commandOutput = "MS-DOS version 1.0";
+        } else {
+            commandOutput = "Bad command or file name";
+        }
 
-                // Append the user's command and output to the output container
-                outputContainer.textContent += A:> ${inputText}\n${commandOutput}\n;
+        // Append the user's command and output to the output container
+        outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
 
-                // Clear the input field for new input
-                userInput.innerText = '';
+        // Clear the input field for new input
+        userInput.innerText = '';
 
-                event.preventDefault(); // Prevent the default behavior (like adding a newline in the input)
-            }
-        });
+        event.preventDefault(); // Prevent the default behavior (like adding a newline in the input)
+    }
+});
     </script>
 </body>
 </html>
