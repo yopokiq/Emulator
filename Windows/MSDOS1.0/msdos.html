@@ -120,7 +120,11 @@
                     ].join("\n");
                 } else if (inputText === "VER") {
                     commandOutput = "MS-DOS version 1.0";
-                } else {
+                }
+                else if (inputText.trim() == "") {
+                    commandOutput = "A:>";
+                }
+                else {
                     commandOutput = "Bad command or file name";
                 }
 
