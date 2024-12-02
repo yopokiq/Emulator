@@ -3,7 +3,7 @@
 <head>
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css">
-    <link id="favicon" rel="icon" href="https://iili.io/205OIEP.png" type="image/png"> <!-- Default (light mode) -->
+    <link id="favicon" rel="icon" href="https://iili.io/207HCAu.png" type="image/png"> <!-- Default (light mode) -->
 <style>
     html, body, div, input {
         font-family: "Fixedsys 62";
@@ -128,8 +128,12 @@
                 }
 
                 // Append the user's command and output to the output container
+                if (inputText.trim() == "") {
+               outputContainer.textContent += `A:> ${inputText}\n`;
+                }
+                else {
                 outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
-
+                }
                 // Clear the input field for new input
                 userInput.innerText = '';
 
@@ -137,5 +141,7 @@
             }
         });
     </script>
+
+
 </body>
 </html>
