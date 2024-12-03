@@ -47,7 +47,7 @@
         // Setup canvas
         var canvas = document.getElementById("visibleContent");
         var context = canvas.getContext("2d");
-
+        var getInput = "";
         // Ensure canvas fills the entire window
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -64,6 +64,12 @@
         context.fillText("Microsoft Disk Operating System", 0, 13);
         context.fillText("Version 1.00", 0, 30);
         context.fillText("(C)Copyright Microsoft Corp 1981", -3, 50);
+        window.addEventListener("keydown", function(event) {
+            if (event.key == "Backspace") {
+                getInput.slice(-1)
+            }
+            
+        })
     </script>
 </body>
 </html>
