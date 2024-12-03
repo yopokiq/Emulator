@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/font.css"> <!-- Fixedsys 62 font -->
+    <link id="favicon" rel="icon" href="https://iili.io/207HCAu.png" type="image/png"> <!-- Default (light mode) -->
+    <title>MS-DOS 1.0 Emulator</title>
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: "Fixedsys 62", monospace; /* Ensure the font is applied */
+            background-color: black; /* Black background for the DOS emulator look */
+            color: white;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="visibleContent"></canvas>
+    <script>
+        // Function to check the theme preference and set the favicon accordingly
+        function setFaviconBasedOnTheme() {
+            const darkModeFavicon = "https://iili.io/207HCAu.png"; // Favicon for dark mode
+            const lightModeFavicon = "https://iili.io/205OIEP.png"; // Favicon for light mode
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+            // Select the favicon element
+            const favicon = document.getElementById('favicon');
+
+            // Change the favicon based on the theme
+            if (isDarkMode) {
+                favicon.href = darkModeFavicon;
+            } else {
+                favicon.href = lightModeFavicon;
+            }
+        }
+
+        // Call the function to set the favicon when the page loads
+        setFaviconBasedOnTheme();
+
+        // Optional: Re-check theme change dynamically if the user switches between dark/light mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
+        
+        // Setup canvas
+        var canvas = document.getElementById("visibleContent");
+        var context = canvas.getContext("2d");
+
+        // Ensure canvas fills the entire window
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Set background to black
+        context.fillStyle = '#000000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set font to 20px Fixedsys 62
+        context.font = '20px "Fixedsys 62"';
+        context.fillStyle = 'white'; // Set text color to white for contrast
+
+        // Drawing initial text on the canvas
+        context.fillText("Microsoft Disk Operating System", 0, 13);
+        context.fillText("Version 1.00", 0, 30);
+        context.fillText("(C)Copyright Microsoft Corp 1981", -3, 50);
+    </script>
+</body>
+</html>
