@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
@@ -49,22 +49,21 @@
     </div>
 
 <script>
-    // Function to focus the input content and select text
-    function focusAndSelectInput() {
+    // Function to focus the input content
+    function focusInput() {
         const userInput = document.getElementById("userInput");
         userInput.focus(); // Focus on the contenteditable div
-        document.execCommand('selectAll'); // Select all the content inside the div
     }
 
     // Call this function initially to focus the input when the page loads
     window.addEventListener("load", function() {
-        focusAndSelectInput();
+        focusInput();
     });
 
-    // Always ensure the input is focused and selected after each input event
+    // Always ensure the input is focused after each input event
     const userInput = document.getElementById("userInput");
     userInput.addEventListener('input', function() {
-        focusAndSelectInput(); // Keep the input focused and selected during typing
+        focusInput(); // Keep the input focused during typing
     });
 
     // Function to check the theme preference and set the favicon accordingly
@@ -212,7 +211,7 @@
                     currentFileName = fileName;
                     currentFileType = fileType;
 
-                    let existingFileIndex = files.findIndex(file => file.filename === `${currentFileName}.${currentFileType}`);
+                    let existingFileIndex = files.findIndex(file => file.filename === ${currentFileName}.${currentFileType});
                     if (existingFileIndex !== -1) {
                         files.splice(existingFileIndex, 1); // Overwrite existing file
                     }
@@ -225,7 +224,7 @@
             } else {
                 if (inFileCreation) {
                     let fileContent = inputText.trim();
-                    let finalFile = `${currentFileName}.${currentFileType}`;
+                    let finalFile = ${currentFileName}.${currentFileType};
 
                     files.push({
                         "filename": finalFile,
@@ -242,7 +241,7 @@
             }
 
             // Output the command and result
-            outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
+            outputContainer.textContent += A:> ${inputText}\n${commandOutput}\n;
 
             // Clear input
             userInput.innerText = '';
@@ -251,4 +250,4 @@
     });
 </script>
 </body>
-</html>
+</html> 
