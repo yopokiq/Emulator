@@ -19,17 +19,11 @@
             width: 100%;
         }
 
-        /* Hide the cursor globally */
-        html, body {
-            cursor: none; /* Hide cursor everywhere */
-        }
-
-        /* Hide cursor inside the editable input */
+        /* Style for user input area */
         #userInput {
             display: inline-block;
             min-width: 100%;
             word-wrap: break-word;
-            caret-color: transparent; /* Hide the cursor inside the contenteditable */
         }
 
     </style>
@@ -48,182 +42,218 @@
         </div>
     </div>
 
-<script>
-    // Function to move cursor to the far right after every input
-    function moveCursorToEnd() {
-        const userInput = document.getElementById("userInput");
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(userInput);
-        range.collapse(false); // Move to the end of the content
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-
-    // Handle input events without focusing on the user input
-    const userInput = document.getElementById("userInput");
-
-    userInput.addEventListener('input', function() {
-        moveCursorToEnd(); // Ensure the cursor remains at the end of the text
-    });
-
-    userInput.addEventListener('keydown', function(event) {
-        // Detect Ctrl/Cmd + Z and insert ^Z into the input
-        if ((event.ctrlKey || event.metaKey) && event.key === "z") {
-            event.preventDefault(); // Prevent the default undo action
+    <script>
+        // Function to check the theme preference and set the favicon accordingly
+        function setFaviconBasedOnTheme() {
+            const darkModeFavicon = "https://iili.io/207HCAu.png";
+            const lightModeFavicon = "https://iili.io/205OIEP.png";
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            // Insert ^Z at the cursor position as a single character
-            const cursorPosition = userInput.selectionStart;
-            const currentText = userInput.innerText;
-            const newText = currentText.slice(0, cursorPosition) + '^Z' + currentText.slice(cursorPosition);
+            const favicon = document.getElementById('favicon');
+            
+            if (isDarkMode) {
+                favicon.href = darkModeFavicon;
+            } else {
+                favicon.href = lightModeFavicon;
+            }
+        }
+        
+        setFaviconBasedOnTheme();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
 
-            userInput.innerText = newText;
+        // Load files from localStorage or use default files
+        let files = JSON.parse(localStorage.getItem("files")) || [
+            {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "COMMAND.COM", "content": "<system-code-placeholder>"}
+        ];
 
-            // Move the cursor position after ^Z
-            userInput.selectionStart = userInput.selectionEnd = cursorPosition + 3; // Length of "^Z" is 3
-            moveCursorToEnd(); // Ensure the cursor moves to the end
-        } else if (event.key === "Backspace" || event.key === "Delete") {
-            const cursorPosition = userInput.selectionStart;
-            const currentText = userInput.innerText;
+        const userInput = document.getElementById("userInput");
+        const outputContainer = document.getElementById("output-container");
 
-            // Case 1: User is deleting after "^Z" (for Backspace)
-            if (cursorPosition < currentText.length && currentText.slice(cursorPosition, cursorPosition + 2) === "^Z") {
-                event.preventDefault(); // Prevent default delete/backspace action
-                // Remove "^Z"
-                const newText = currentText.slice(0, cursorPosition) + currentText.slice(cursorPosition + 2);
+        let inFileCreation = false;
+        let currentFileName = '';
+        let currentFileType = '';
+
+        // Save files to localStorage
+        function saveFiles() {
+            localStorage.setItem("files", JSON.stringify(files));
+        }
+
+        // Function to move cursor to the far right after every input
+        function moveCursorToEnd() {
+            const range = document.createRange();
+            const selection = window.getSelection();
+            range.selectNodeContents(userInput);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        userInput.addEventListener('keydown', function(event) {
+            // Detect Ctrl/Cmd + Z and insert ^Z into the input
+            if ((event.ctrlKey || event.metaKey) && event.key === "z") {
+                event.preventDefault(); // Prevent the default undo action
+                
+                // Insert ^Z at the cursor position as a single character
+                const cursorPosition = userInput.selectionStart;
+                const currentText = userInput.innerText;
+                const newText = currentText.slice(0, cursorPosition) + '^Z' + currentText.slice(cursorPosition);
+
                 userInput.innerText = newText;
-                userInput.selectionStart = userInput.selectionEnd = cursorPosition;
-                moveCursorToEnd(); // Ensure the cursor moves to the end
-            }
-            // Case 2: User is deleting before "^Z" (for Delete)
-            else if (cursorPosition >= 2 && currentText.slice(cursorPosition - 2, cursorPosition) === "^Z") {
-                event.preventDefault(); // Prevent the default action of Backspace or Delete
-                // Remove "^Z"
-                const newText = currentText.slice(0, cursorPosition - 2) + currentText.slice(cursorPosition);
-                userInput.innerText = newText;
-                userInput.selectionStart = userInput.selectionEnd = cursorPosition - 2;
-                moveCursorToEnd(); // Ensure the cursor moves to the end
-            }
-        } else if (event.key === "Enter") {
-            let inputText = userInput.innerText.trim();
-            let commandOutput = '';
 
-            if (inputText === "DIR") {
-                commandOutput = [
-                    "Directory of A has no label",
-                    "Directory of A:\\",
-                    ...files.map(file => file.filename)
-                ].join("\n");
-            }
-            // Implementing new commands
-            else if (inputText.startsWith("COPY ")) {
-                let args = inputText.slice(5).split(" ");
-                if (args.length === 2) {
-                    let sourceFile = args[0];
-                    let destFile = args[1];
+                // Move the cursor position after ^Z
+                userInput.selectionStart = userInput.selectionEnd = cursorPosition + 3; // Length of "^Z" is 3
+                moveCursorToEnd(); // Ensure the cursor moves to the end
+            } else if (event.key === "Backspace" || event.key === "Delete") {
+                const cursorPosition = userInput.selectionStart;
+                const currentText = userInput.innerText;
 
-                    let file = files.find(file => file.filename === sourceFile);
-                    if (file) {
-                        files.push({
-                            "filename": destFile,
-                            "content": file.content
-                        });
-                        saveFiles();
+                // Case 1: User is deleting after "^Z" (for Backspace)
+                if (cursorPosition < currentText.length && currentText.slice(cursorPosition, cursorPosition + 2) === "^Z") {
+                    event.preventDefault(); // Prevent default delete/backspace action
+                    
+                    // Remove "^Z"
+                    const newText = currentText.slice(0, cursorPosition) + currentText.slice(cursorPosition + 2);
+                    userInput.innerText = newText;
+
+                    // Move the cursor back 2 positions
+                    userInput.selectionStart = userInput.selectionEnd = cursorPosition;
+                    moveCursorToEnd(); // Ensure the cursor moves to the end
+                }
+                // Case 2: User is deleting before "^Z" (for Delete)
+                else if (cursorPosition >= 2 && currentText.slice(cursorPosition - 2, cursorPosition) === "^Z") {
+                    event.preventDefault(); // Prevent the default action of Backspace or Delete
+                    
+                    // Remove "^Z"
+                    const newText = currentText.slice(0, cursorPosition - 2) + currentText.slice(cursorPosition);
+                    userInput.innerText = newText;
+
+                    // Move the cursor back 2 positions
+                    userInput.selectionStart = userInput.selectionEnd = cursorPosition - 2;
+                    moveCursorToEnd(); // Ensure the cursor moves to the end
+                }
+            } else if (event.key === "Enter") {
+                let inputText = userInput.innerText.trim();
+                let commandOutput = '';
+
+                if (inputText === "DIR") {
+                    commandOutput = [
+                        "Directory of A has no label",
+                        "Directory of A:\\",
+                        ...files.map(file => file.filename)
+                    ].join("\n");
+                }
+                // Implementing new commands
+                else if (inputText.startsWith("COPY ")) {
+                    let args = inputText.slice(5).split(" ");
+                    if (args.length === 2) {
+                        let sourceFile = args[0];
+                        let destFile = args[1];
+
+                        let file = files.find(file => file.filename === sourceFile);
+                        if (file) {
+                            files.push({
+                                "filename": destFile,
+                                "content": file.content
+                            });
+                            saveFiles();
+                        } else {
+                        }
                     } else {
+                        commandOutput = "Bad command or file name";
                     }
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            } else if (inputText.startsWith("DEL ")) {
-                let fileToDelete = inputText.slice(4);
-                let fileIndex = files.findIndex(file => file.filename === fileToDelete);
-                if (fileIndex !== -1) {
-                    files.splice(fileIndex, 1);
-                    saveFiles();
-                    commandOutput = "Bad command or file name";
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            } else if (inputText.startsWith("REN ")) {
-                let args = inputText.slice(4).split(" ");
-                if (args.length === 2) {
-                    let oldName = args[0];
-                    let newName = args[1];
-
-                    let fileIndex = files.findIndex(file => file.filename === oldName);
+                } else if (inputText.startsWith("DEL ")) {
+                    let fileToDelete = inputText.slice(4);
+                    let fileIndex = files.findIndex(file => file.filename === fileToDelete);
                     if (fileIndex !== -1) {
-                        files[fileIndex].filename = newName;
+                        files.splice(fileIndex, 1);
                         saveFiles();
+                        commandOutput = `Bad command or file name`;
+                    } else {
+                        commandOutput = `Bad command or file name`;
+                    }
+                } else if (inputText.startsWith("REN ")) {
+                    let args = inputText.slice(4).split(" ");
+                    if (args.length === 2) {
+                        let oldName = args[0];
+                        let newName = args[1];
+
+                        let fileIndex = files.findIndex(file => file.filename === oldName);
+                        if (fileIndex !== -1) {
+                            files[fileIndex].filename = newName;
+                            saveFiles();
+                        } else {
+                            commandOutput = `Bad command or file name`;
+                        }
+                    } else {
+                        commandOutput = "Bad command or file name";
+                    }
+                } else if (inputText.startsWith("TYPE ")) {
+                    let fileName = inputText.slice(5);
+                    let file = files.find(file => file.filename === fileName);
+                    if (file) {
+                        commandOutput = file.content;
+                    } else {
+                        commandOutput = `Bad command or file name`;
+                    }
+                }
+                else if (inputText.trim() === "") {
+                    // Handle empty input
+                } else if (inputText.startsWith("COPY CON ")) {
+                    let fileNameAndType = inputText.split("COPY CON ")[1];
+                    let fileNameParts = fileNameAndType.split(".");
+                    let fileName = fileNameParts[0];
+                    let fileType = fileNameParts[1];
+
+                    if (fileName.length <= 8 && fileType.length <= 3) {
+                        currentFileName = fileName;
+                        currentFileType = fileType;
+
+                        let existingFileIndex = files.findIndex(file => file.filename === `${currentFileName}.${currentFileType}`);
+                        if (existingFileIndex !== -1) {
+                            files.splice(existingFileIndex, 1); // Overwrite existing file
+                        }
+
+                        inFileCreation = true;
+                        commandOutput = ''; // No extra message
                     } else {
                         commandOutput = "Bad command or file name";
                     }
                 } else {
-                    commandOutput = "Bad command or file name";
-                }
-            } else if (inputText.startsWith("TYPE ")) {
-                let fileName = inputText.slice(5);
-                let file = files.find(file => file.filename === fileName);
-                if (file) {
-                    commandOutput = file.content;
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            }
-            else if (inputText.trim() === "") {
-                // Handle empty input
-            } else if (inputText.startsWith("COPY CON ")) {
-                let fileNameAndType = inputText.split("COPY CON ")[1];
-                let fileNameParts = fileNameAndType.split(".");
+                    if (inFileCreation) {
+                        let fileContent = inputText.trim();
+                        let finalFile = `${currentFileName}.${currentFileType}`;
 
-                let fileName = fileNameParts[0];
-                let fileType = fileNameParts[1];
+                        files.push({
+                            "filename": finalFile,
+                            "content": fileContent
+                        });
 
-                if (fileName.length <= 8 && fileType.length <= 3) {
-                    currentFileName = fileName;
-                    currentFileType = fileType;
+                        saveFiles();
 
-                    let existingFileIndex = files.findIndex(file => file.filename === `${currentFileName}.${currentFileType}`);
-                    if (existingFileIndex !== -1) {
-                        files.splice(existingFileIndex, 1); // Overwrite existing file
+                        inFileCreation = false;
+                        commandOutput = ''; // No extra message
+                    } else {
+                        commandOutput = "Bad command or file name";
                     }
-
-                    inFileCreation = true;
-                    commandOutput = ''; // No extra message
-                } else {
-                    commandOutput = "Bad command or file name";
                 }
-            } else {
-                if (inFileCreation) {
-                    let fileContent = inputText.trim();
-                    let finalFile = `${currentFileName}.${currentFileType}`;
 
-                    files.push({
-                        "filename": finalFile,
-                        "content": fileContent
-                    });
-
-                    saveFiles();
-
-                    inFileCreation = false;
-                    commandOutput = ''; // No extra message
+                // Output the command and result
+                if (inputText.trim() === "") {
+                    outputContainer.textContent += `A:> ${inputText}\n`;
                 } else {
-                    commandOutput = "Bad command or file name";
+                    outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
                 }
-            }
 
-            // Output the command and result
-            if (inputText.trim() === "") {
-                outputContainer.textContent += `A:> ${inputText}\n`;
-            } else {
-                outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
+                // Clear input and move cursor to end
+                userInput.innerText = '';
+                moveCursorToEnd();
+                event.preventDefault();
             }
-
-            // Clear input and move cursor to end
-            userInput.innerText = '';
-            moveCursorToEnd();
-            event.preventDefault();
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
+
+
