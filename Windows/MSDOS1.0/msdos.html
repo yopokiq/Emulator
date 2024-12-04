@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
@@ -8,6 +8,7 @@
         html, body, div, input {
             font-family: "Fixedsys 62";
         }
+
         /* Output container style */
         #output-container {
             white-space: pre-wrap;
@@ -18,19 +19,19 @@
         #input-container {
             width: 100%;
         }
+
         /* Hide the cursor globally */
         html, body {
             cursor: none; /* Hide cursor everywhere */
         }
 
-        /* Hide cursor inside the editable input */
+        /* Keep cursor visible inside the editable input */
         #userInput {
             display: inline-block;
             min-width: 100%;
             word-wrap: break-word;
-            caret-color: transparent; /* Hide the cursor inside the contenteditable */
+            caret-color: white; /* Visible cursor */
         }
-
     </style>
     <title>MS-DOS 1.0 Emulator</title>
 </head>
@@ -42,8 +43,8 @@
     <div id="output-container" class="black"></div>
     <div id="input-container">
         <div class="black">
-            <span>A:&gt;</span> <!-- No longer editable -->
-            <div contenteditable="true" id="userInput"></div> <!-- Editable part -->
+            <span>A:&gt;</span>
+            <div contenteditable="true" id="userInput"></div>
         </div>
     </div>
 
@@ -142,34 +143,21 @@
             const cursorPosition = userInput.selectionStart;
             const currentText = userInput.innerText;
 
-            // Case 1: User is deleting after "^Z" (for Backspace)
+            // Handle backspace and delete with ^Z
             if (cursorPosition < currentText.length && currentText.slice(cursorPosition, cursorPosition + 2) === "^Z") {
-                event.preventDefault(); // Prevent default delete/backspace action
+                event.preventDefault();
                 
-                // Remove "^Z"
                 const newText = currentText.slice(0, cursorPosition) + currentText.slice(cursorPosition + 2);
                 userInput.innerText = newText;
 
-                // Move the cursor back 2 positions
                 userInput.selectionStart = userInput.selectionEnd = cursorPosition;
-                moveCursorToEnd(); // Ensure the cursor moves to the end
-            }
-            // Case 2: User is deleting before "^Z" (for Delete)
-            else if (cursorPosition >= 2 && currentText.slice(cursorPosition - 2, cursorPosition) === "^Z") {
-                event.preventDefault(); // Prevent the default action of Backspace or Delete
-                
-                // Remove "^Z"
-                const newText = currentText.slice(0, cursorPosition - 2) + currentText.slice(cursorPosition);
-                userInput.innerText = newText;
-
-                // Move the cursor back 2 positions
-                userInput.selectionStart = userInput.selectionEnd = cursorPosition - 2;
-                moveCursorToEnd(); // Ensure the cursor moves to the end
+                moveCursorToEnd(); 
             }
         } else if (event.key === "Enter") {
             let inputText = userInput.innerText.trim();
             let commandOutput = '';
 
+            // Implement basic file system commands
             if (inputText === "DIR") {
                 commandOutput = [
                     "Directory of A has no label",
@@ -177,7 +165,6 @@
                     ...files.map(file => file.filename)
                 ].join("\n");
             }
-            // Implementing new commands
             else if (inputText.startsWith("COPY ")) {
                 let args = inputText.slice(5).split(" ");
                 if (args.length === 2) {
@@ -192,9 +179,8 @@
                         });
                         saveFiles();
                     } else {
+                        commandOutput = "Bad command or file name";
                     }
-                } else {
-                    commandOutput = "Bad command or file name";
                 }
             } else if (inputText.startsWith("DEL ")) {
                 let fileToDelete = inputText.slice(4);
@@ -236,6 +222,7 @@
             } else if (inputText.startsWith("COPY CON ")) {
                 let fileNameAndType = inputText.split("COPY CON ")[1];
                 let fileNameParts = fileNameAndType.split(".");
+
                 let fileName = fileNameParts[0];
                 let fileType = fileNameParts[1];
 
@@ -254,30 +241,11 @@
                     commandOutput = "Bad command or file name";
                 }
             } else {
-                if (inFileCreation) {
-                    let fileContent = inputText.trim();
-                    let finalFile = `${currentFileName}.${currentFileType}`;
-
-                    files.push({
-                        "filename": finalFile,
-                        "content": fileContent
-                    });
-
-                    saveFiles();
-
-                    inFileCreation = false;
-                    commandOutput = ''; // No extra message
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
+                commandOutput = "Bad command or file name";
             }
 
             // Output the command and result
-            if (inputText.trim() === "") {
-                outputContainer.textContent += `A:> ${inputText}\n`;
-            } else {
-                outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
-            }
+            outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
 
             // Clear input and move cursor to end
             userInput.innerText = '';
