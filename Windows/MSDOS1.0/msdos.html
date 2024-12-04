@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
@@ -49,27 +49,21 @@
     </div>
 
 <script>
-    // Function to focus and select the input content
-    function focusAndSelectInput() {
+    // Function to focus the input content
+    function focusInput() {
         const userInput = document.getElementById("userInput");
         userInput.focus(); // Focus on the contenteditable div
-
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(userInput); // Select the entire content of the input
-        selection.removeAllRanges();
-        selection.addRange(range); // Apply the selection to the input
     }
 
-    // Call this function initially to focus and select the input when the page loads
+    // Call this function initially to focus the input when the page loads
     window.addEventListener("load", function() {
-        focusAndSelectInput();
+        focusInput();
     });
 
-    // Always ensure the input is focused and selected after each input event
+    // Always ensure the input is focused after each input event
     const userInput = document.getElementById("userInput");
     userInput.addEventListener('input', function() {
-        focusAndSelectInput(); // Keep the input focused and selected during typing
+        focusInput(); // Keep the input focused during typing
     });
 
     // Function to check the theme preference and set the favicon accordingly
@@ -108,20 +102,9 @@
         localStorage.setItem("files", JSON.stringify(files));
     }
 
-    // Function to move cursor to the far right after every input
-    function moveCursorToEnd() {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(userInput);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-
     // Event listener to convert input to uppercase
     userInput.addEventListener('input', function() {
         userInput.innerText = userInput.innerText.toUpperCase();
-        moveCursorToEnd();  // Ensure the cursor remains at the end of the text
     });
 
     userInput.addEventListener('keydown', function(event) {
@@ -138,7 +121,6 @@
 
             // Move the cursor position after ^Z
             userInput.selectionStart = userInput.selectionEnd = cursorPosition + 3; // Length of "^Z" is 3
-            moveCursorToEnd(); // Ensure the cursor moves to the end
         } else if (event.key === "Backspace" || event.key === "Delete") {
             const cursorPosition = userInput.selectionStart;
             const currentText = userInput.innerText;
@@ -151,7 +133,6 @@
                 userInput.innerText = newText;
 
                 userInput.selectionStart = userInput.selectionEnd = cursorPosition;
-                moveCursorToEnd(); 
             }
         } else if (event.key === "Enter") {
             let inputText = userInput.innerText.trim();
@@ -262,9 +243,8 @@
             // Output the command and result
             outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
 
-            // Clear input and move cursor to end
+            // Clear input
             userInput.innerText = '';
-            moveCursorToEnd();
             event.preventDefault();
         }
     });
