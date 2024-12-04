@@ -8,7 +8,6 @@
         html, body, div, input {
             font-family: "Fixedsys 62";
         }
-
         /* Output container style */
         #output-container {
             white-space: pre-wrap;
@@ -25,13 +24,14 @@
             cursor: none; /* Hide cursor everywhere */
         }
 
-        /* Keep cursor visible inside the editable input */
+        /* Hide cursor inside the editable input */
         #userInput {
             display: inline-block;
             min-width: 100%;
             word-wrap: break-word;
-            caret-color: white; /* Visible cursor */
+            caret-color: transparent; /* Hide the cursor inside the contenteditable */
         }
+
     </style>
     <title>MS-DOS 1.0 Emulator</title>
 </head>
@@ -43,68 +43,28 @@
     <div id="output-container" class="black"></div>
     <div id="input-container">
         <div class="black">
-            <span>A:&gt;</span>
-            <div contenteditable="true" id="userInput"></div>
+            <span>A:&gt;</span> <!-- No longer editable -->
+            <div contenteditable="true" id="userInput"></div> <!-- Editable part -->
         </div>
     </div>
 
 <script>
-    // Function to focus the input content
-    function focusInput() {
+    // Function to move cursor to the far right after every input
+    function moveCursorToEnd() {
         const userInput = document.getElementById("userInput");
-        userInput.focus(); // Focus on the contenteditable div
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(userInput);
+        range.collapse(false); // Move to the end of the content
+        selection.removeAllRanges();
+        selection.addRange(range);
     }
 
-    // Call this function initially to focus the input when the page loads
-    window.addEventListener("load", function() {
-        focusInput();
-    });
-
-    // Always ensure the input is focused after each input event
+    // Handle input events without focusing on the user input
     const userInput = document.getElementById("userInput");
+
     userInput.addEventListener('input', function() {
-        focusInput(); // Keep the input focused during typing
-    });
-
-    // Function to check the theme preference and set the favicon accordingly
-    function setFaviconBasedOnTheme() {
-        const darkModeFavicon = "https://iili.io/207HCAu.png";
-        const lightModeFavicon = "https://iili.io/205OIEP.png";
-        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        const favicon = document.getElementById('favicon');
-        
-        if (isDarkMode) {
-            favicon.href = darkModeFavicon;
-        } else {
-            favicon.href = lightModeFavicon;
-        }
-    }
-    
-    setFaviconBasedOnTheme();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
-
-    // Load files from localStorage or use default files
-    let files = JSON.parse(localStorage.getItem("files")) || [
-        {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
-        {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
-        {"filename": "COMMAND.COM", "content": "<system-code-placeholder>"}
-    ];
-
-    const outputContainer = document.getElementById("output-container");
-
-    let inFileCreation = false;
-    let currentFileName = '';
-    let currentFileType = '';
-
-    // Save files to localStorage
-    function saveFiles() {
-        localStorage.setItem("files", JSON.stringify(files));
-    }
-
-    // Event listener to convert input to uppercase
-    userInput.addEventListener('input', function() {
-        userInput.innerText = userInput.innerText.toUpperCase();
+        moveCursorToEnd(); // Ensure the cursor remains at the end of the text
     });
 
     userInput.addEventListener('keydown', function(event) {
@@ -121,24 +81,33 @@
 
             // Move the cursor position after ^Z
             userInput.selectionStart = userInput.selectionEnd = cursorPosition + 3; // Length of "^Z" is 3
+            moveCursorToEnd(); // Ensure the cursor moves to the end
         } else if (event.key === "Backspace" || event.key === "Delete") {
             const cursorPosition = userInput.selectionStart;
             const currentText = userInput.innerText;
 
-            // Handle backspace and delete with ^Z
+            // Case 1: User is deleting after "^Z" (for Backspace)
             if (cursorPosition < currentText.length && currentText.slice(cursorPosition, cursorPosition + 2) === "^Z") {
-                event.preventDefault();
-                
+                event.preventDefault(); // Prevent default delete/backspace action
+                // Remove "^Z"
                 const newText = currentText.slice(0, cursorPosition) + currentText.slice(cursorPosition + 2);
                 userInput.innerText = newText;
-
                 userInput.selectionStart = userInput.selectionEnd = cursorPosition;
+                moveCursorToEnd(); // Ensure the cursor moves to the end
+            }
+            // Case 2: User is deleting before "^Z" (for Delete)
+            else if (cursorPosition >= 2 && currentText.slice(cursorPosition - 2, cursorPosition) === "^Z") {
+                event.preventDefault(); // Prevent the default action of Backspace or Delete
+                // Remove "^Z"
+                const newText = currentText.slice(0, cursorPosition - 2) + currentText.slice(cursorPosition);
+                userInput.innerText = newText;
+                userInput.selectionStart = userInput.selectionEnd = cursorPosition - 2;
+                moveCursorToEnd(); // Ensure the cursor moves to the end
             }
         } else if (event.key === "Enter") {
             let inputText = userInput.innerText.trim();
             let commandOutput = '';
 
-            // Implement basic file system commands
             if (inputText === "DIR") {
                 commandOutput = [
                     "Directory of A has no label",
@@ -146,6 +115,7 @@
                     ...files.map(file => file.filename)
                 ].join("\n");
             }
+            // Implementing new commands
             else if (inputText.startsWith("COPY ")) {
                 let args = inputText.slice(5).split(" ");
                 if (args.length === 2) {
@@ -160,8 +130,9 @@
                         });
                         saveFiles();
                     } else {
-                        commandOutput = "Bad command or file name";
                     }
+                } else {
+                    commandOutput = "Bad command or file name";
                 }
             } else if (inputText.startsWith("DEL ")) {
                 let fileToDelete = inputText.slice(4);
@@ -211,7 +182,7 @@
                     currentFileName = fileName;
                     currentFileType = fileType;
 
-                    let existingFileIndex = files.findIndex(file => file.filename === ${currentFileName}.${currentFileType});
+                    let existingFileIndex = files.findIndex(file => file.filename === `${currentFileName}.${currentFileType}`);
                     if (existingFileIndex !== -1) {
                         files.splice(existingFileIndex, 1); // Overwrite existing file
                     }
@@ -224,7 +195,7 @@
             } else {
                 if (inFileCreation) {
                     let fileContent = inputText.trim();
-                    let finalFile = ${currentFileName}.${currentFileType};
+                    let finalFile = `${currentFileName}.${currentFileType}`;
 
                     files.push({
                         "filename": finalFile,
@@ -241,13 +212,18 @@
             }
 
             // Output the command and result
-            outputContainer.textContent += A:> ${inputText}\n${commandOutput}\n;
+            if (inputText.trim() === "") {
+                outputContainer.textContent += `A:> ${inputText}\n`;
+            } else {
+                outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
+            }
 
-            // Clear input
+            // Clear input and move cursor to end
             userInput.innerText = '';
+            moveCursorToEnd();
             event.preventDefault();
         }
     });
 </script>
 </body>
-</html> 
+</html>
