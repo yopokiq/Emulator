@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulators/Windows/styles/bg.css">
@@ -18,19 +18,18 @@
         #input-container {
             width: 100%;
         }
-/* Hide the cursor globally */
-html, body {
-    cursor: none; /* Hide cursor everywhere */
-}
+        /* Hide the cursor globally */
+        html, body {
+            cursor: none; /* Hide cursor everywhere */
+        }
 
-/* Hide cursor inside the editable input */
-#userInput {
-    display: inline-block;
-    min-width: 100%;
-    word-wrap: break-word;
-    caret-color: transparent; /* Hide the cursor inside the contenteditable */
-}
-
+        /* Hide cursor inside the editable input */
+        #userInput {
+            display: inline-block;
+            min-width: 100%;
+            word-wrap: break-word;
+            caret-color: transparent; /* Hide the cursor inside the contenteditable */
+        }
 
     </style>
     <title>MS-DOS 1.0 Emulator</title>
@@ -50,27 +49,28 @@ html, body {
 
 <script>
     // Ensure the input always has focus and is selected
-function focusAndSelectInput() {
+    function focusAndSelectInput() {
+        const userInput = document.getElementById("userInput");
+        userInput.focus(); // Focus on the contenteditable div
+
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(userInput); // Select the entire content of the input
+        selection.removeAllRanges();
+        selection.addRange(range); // Apply the selection to the input
+    }
+
+    // Call this function initially to focus and select the input when the page loads
+    window.addEventListener("load", function() {
+        focusAndSelectInput();
+    });
+
+    // Always ensure the input is focused and selected after each input event
     const userInput = document.getElementById("userInput");
-    userInput.focus(); // Focus on the contenteditable div
+    userInput.addEventListener('input', function() {
+        focusAndSelectInput(); // Keep the input focused and selected during typing
+    });
 
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(userInput); // Select the entire content of the input
-    selection.removeAllRanges();
-    selection.addRange(range); // Apply the selection to the input
-}
-
-// Call this function initially to focus and select the input when the page loads
-window.addEventListener("load", function() {
-    focusAndSelectInput();
-});
-
-// Always ensure the input is focused and selected after each input event
-const userInput = document.getElementById("userInput");
-userInput.addEventListener('input', function() {
-    focusAndSelectInput(); // Keep the input focused and selected during typing
-});
     // Function to check the theme preference and set the favicon accordingly
     function setFaviconBasedOnTheme() {
         const darkModeFavicon = "https://iili.io/207HCAu.png";
@@ -96,7 +96,6 @@ userInput.addEventListener('input', function() {
         {"filename": "COMMAND.COM", "content": "<system-code-placeholder>"}
     ];
 
-    const userInput = document.getElementById("userInput");
     const outputContainer = document.getElementById("output-container");
 
     let inFileCreation = false;
@@ -289,3 +288,4 @@ userInput.addEventListener('input', function() {
 </script>
 </body>
 </html>
+ 
