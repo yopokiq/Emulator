@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'Fixedsys 62';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Fixedsys 62'), url('Fixedsys62.woff') format('woff');
+}
+@font-face {
+    font-family: 'PxPlus IBM CGA';
+    font-style: normal;
+    font-weight: normal;
+    src: local('PxPlus IBM CGA'), url('PxPlus_IBM_CGA.ttf') format('ttf');
+}
