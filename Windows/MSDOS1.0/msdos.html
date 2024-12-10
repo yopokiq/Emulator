@@ -236,6 +236,13 @@
             event.preventDefault();
         }
     });
+    document.addEventListener("click", function() {
+    // Check if it's not already focused
+    if (document.activeElement !== userInput) {
+        userInput.focus();  // Focus on the userInput element
+    }
+});
+
     </script>
 </body>
 </html>
