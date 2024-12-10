@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://yopokiq.github.io/Emulator/Windows/styles/bg.css">
     <link rel="stylesheet" href="https://yopokiq.github.io/Emulator/Windows/styles/fonts.css"> <!-- Import PxPlus IBM CGA and Fixedsys 62-->
     <link id="favicon" rel="icon" href="https://iili.io/207HCAu.png" type="image/png">
     <style>
@@ -25,7 +24,30 @@
             min-width: 100%;
             word-wrap: break-word;
         }
+.black {
+   background-color: black;
+   color: white;
+   font-family: "Fixedsys 62";
+}
+/* Ensure the editable div blends with the black background */
+div[contenteditable="true"] {
+    background-color: transparent; /* Make the background transparent to blend in with the black background */
+    color: white; /* Set text color to white for visibility */
+    border: none; /* Remove the border */
+    outline: none; /* Remove any focus outline */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    font-family: inherit; /* Use the same font as the surrounding text */
+    font-size: inherit; /* Use the same font size as the surrounding text */
+}
 
+/* Make sure the container aligns properly without visible borders */
+#input-container .black div[contenteditable="true"] {
+    min-width: 50px; /* Minimum width for the editable area */
+    display: inline-block; /* Ensures it stays on the same line as the span */
+    vertical-align: middle; /* Ensure vertical alignment */
+    box-sizing: border-box; /* Include padding and border in height calculation */
+}
     </style>
     <title>MS-DOS 1.0 Emulator</title>
 </head>
