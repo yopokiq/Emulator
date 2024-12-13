@@ -8,5 +8,5 @@
     font-family: 'DOS VGA 9x16';
     font-style: normal;
     font-weight: normal;
-    src: local('DOS VGA 9x16'), url('DOS_VGA_9x16.ttf') format('ttf');
+    src: local('DOS VGA 9x16'), url('dos-vga-9x16.ttf') format('ttf');
 }
