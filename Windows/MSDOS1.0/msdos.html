@@ -1,12 +1,29 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://yopokiq.github.io/Emulator/Windows/styles/fonts.css"> <!-- Import PxPlus IBM CGA and Fixedsys 62-->
     <link id="favicon" rel="icon" href="https://iili.io/207HCAu.png" type="image/png">
     <style>
-        html, body, div, input {
-            font-family: "PxPlus IBM CGA";
+        /* Ensure the Fixedsys 62 font is correctly applied */
+        @font-face {
+            font-family: 'Fixedsys 62';
+            font-style: normal;
+            font-weight: normal;
+            src: local('Fixedsys 62'), url('https://example.com/fonts/Fixedsys62.woff') format('woff');
         }
+
+        /* Ensure Perfect DOS VGA 437 font is correctly applied */
+        @font-face {
+            font-family: 'Perfect DOS VGA 437';
+            font-style: normal;
+            font-weight: normal;
+            src: local('OEM-US'), local('Code Page 437'), url('https://yopokiq.github.io/Emulator/Windows/styles/PerfectDOSVGA437.ttf') format('truetype');
+        }
+
+        /* Apply font to the entire body or specific elements */
+        * {
+            font-family: "Perfect DOS VGA 437", "Fixedsys 62", monospace;
+        }
+
         /* Output container style */
         #output-container {
             white-space: pre-wrap;
@@ -24,29 +41,29 @@
             min-width: 100%;
             word-wrap: break-word;
         }
-.black {
-   background-color: black;
-   color: white;
-}
-/* Ensure the editable div blends with the black background */
-div[contenteditable="true"] {
-    background-color: transparent; /* Make the background transparent to blend in with the black background */
-    color: white; /* Set text color to white for visibility */
-    border: none; /* Remove the border */
-    outline: none; /* Remove any focus outline */
-    padding: 0; /* Remove padding */
-    margin: 0; /* Remove margin */
-    font-family: inherit; /* Use the same font as the surrounding text */
-    font-size: inherit; /* Use the same font size as the surrounding text */
-}
 
-/* Make sure the container aligns properly without visible borders */
-#input-container .black div[contenteditable="true"] {
-    min-width: 50px; /* Minimum width for the editable area */
-    display: inline-block; /* Ensures it stays on the same line as the span */
-    vertical-align: middle; /* Ensure vertical alignment */
-    box-sizing: border-box; /* Include padding and border in height calculation */
-}
+        .black {
+            background-color: black;
+            color: white;
+        }
+
+        /* Ensure the editable div blends with the black background */
+        div[contenteditable="true"] {
+            background-color: transparent;
+            color: white;
+            border: none;
+            outline: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Make sure the container aligns properly without visible borders */
+        #input-container .black div[contenteditable="true"] {
+            min-width: 50px;
+            display: inline-block;
+            vertical-align: middle;
+            box-sizing: border-box;
+        }
     </style>
     <title>MS-DOS 1.0 Emulator</title>
 </head>
@@ -58,212 +75,127 @@ div[contenteditable="true"] {
     <div id="output-container" class="black"></div>
     <div id="input-container">
         <div class="black">
-            <span>A:&gt;</span> <!-- No longer editable -->
+            <span>A:&gt;</span>
             <div contenteditable="true" id="userInput"></div> <!-- Editable part -->
         </div>
     </div>
     <script>
-    // Function to check the theme preference and set the favicon accordingly
-    function setFaviconBasedOnTheme() {
-        const darkModeFavicon = "https://iili.io/207HCAu.png";
-        const lightModeFavicon = "https://iili.io/205OIEP.png";
-        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        const favicon = document.getElementById('favicon');
-        
-        if (isDarkMode) {
-            favicon.href = darkModeFavicon;
-        } else {
-            favicon.href = lightModeFavicon;
-        }
-    }
-    
-    setFaviconBasedOnTheme();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
-
-    // Load files from localStorage or use default files
-    let files = JSON.parse(localStorage.getItem("files")) || [
-        {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
-        {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
-    ];
-
-    const userInput = document.getElementById("userInput");
-    const outputContainer = document.getElementById("output-container");
-
-    let inFileCreation = false;
-    let currentFileName = '';
-    let currentFileType = '';
-
-    // Save files to localStorage
-    function saveFiles() {
-        localStorage.setItem("files", JSON.stringify(files));
-    }
-
-    // Function to move cursor to the far right after every input
-    function moveCursorToEnd() {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(userInput);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-
-    // Convert input to uppercase as user types
-    userInput.addEventListener('input', function() {
-        userInput.innerText = userInput.innerText.toUpperCase();
-        moveCursorToEnd(); // Ensure the cursor stays at the end
-    });
-
-    userInput.addEventListener('keydown', function(event) {
-        // Detect Ctrl/Cmd + Z and insert ^Z into the input
-        if ((event.ctrlKey || event.metaKey) && event.key === "z") {
-            event.preventDefault(); // Prevent the default undo action
+        // Function to check the theme preference and set the favicon accordingly
+        function setFaviconBasedOnTheme() {
+            const darkModeFavicon = "https://iili.io/207HCAu.png";
+            const lightModeFavicon = "https://iili.io/205OIEP.png";
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            // Insert ^Z at the cursor position as a single character
-            const cursorPosition = userInput.selectionStart;
-            const currentText = userInput.innerText;
-            const newText = currentText.slice(0, cursorPosition) + '^Z' + currentText.slice(cursorPosition);
-
-            userInput.innerText = newText;
-
-            // Move the cursor position after ^Z
-            userInput.selectionStart = userInput.selectionEnd = cursorPosition + 3; // Length of "^Z" is 3
-            moveCursorToEnd(); // Ensure the cursor moves to the end
-        } else if (event.key === "Backspace" || event.key === "Delete") {
-            const cursorPosition = userInput.selectionStart;
-            const currentText = userInput.innerText;
-
-            // Case 1: User is deleting after "^Z" (for Backspace)
-            if (cursorPosition < currentText.length && currentText.slice(cursorPosition, cursorPosition + 2) === "^Z") {
-                event.preventDefault(); // Prevent default delete/backspace action
-                
-                // Remove "^Z"
-                const newText = currentText.slice(0, cursorPosition) + currentText.slice(cursorPosition + 2);
-                userInput.innerText = newText;
-
-                // Move the cursor back 2 positions
-                userInput.selectionStart = userInput.selectionEnd = cursorPosition;
-                moveCursorToEnd(); // Ensure the cursor moves to the end
-            }
-            // Case 2: User is deleting before "^Z" (for Delete)
-            else if (cursorPosition >= 2 && currentText.slice(cursorPosition - 2, cursorPosition) === "^Z") {
-                event.preventDefault(); // Prevent the default action of Backspace or Delete
-                
-                // Remove "^Z"
-                const newText = currentText.slice(0, cursorPosition - 2) + currentText.slice(cursorPosition);
-                userInput.innerText = newText;
-
-                // Move the cursor back 2 positions
-                userInput.selectionStart = userInput.selectionEnd = cursorPosition - 2;
-                moveCursorToEnd(); // Ensure the cursor moves to the end
-            }
-        } else if (event.key === "Enter") {
-            let inputText = userInput.innerText.trim();
-            let commandOutput = '';
-
-            if (inputText === "DIR") {
-                commandOutput = [
-                    "Directory of A has no label",
-                    "Directory of A:\\",
-                    ...files.map(file => file.filename)
-                ].join("\n");
-            }
-            // Implementing new commands
-            else if (inputText.startsWith("COPY CON")) {
-                let fileNameAndType = inputText.split("COPY CON ")[1];
-                let fileNameParts = fileNameAndType.split(".");
-                let fileName = fileNameParts[0];
-                let fileType = fileNameParts[1];
-
-                // Validate the file name and type
-                if (fileName.length <= 8 && fileType && fileType.length <= 3) {
-                    currentFileName = fileName;
-                    currentFileType = fileType;
-
-                    let existingFileIndex = files.findIndex(file => file.filename === `${currentFileName}.${currentFileType}`);
-                    if (existingFileIndex !== -1) {
-                        files.splice(existingFileIndex, 1); // Overwrite existing file if necessary
-                    }
-
-                    inFileCreation = true;
-                    commandOutput = ''; // No extra message
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            } else if (inputText.startsWith("DEL ")) {
-                let fileToDelete = inputText.slice(4);
-                let fileIndex = files.findIndex(file => file.filename === fileToDelete);
-                if (fileIndex !== -1) {
-                    files.splice(fileIndex, 1);
-                    saveFiles();
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            } else if (inputText.startsWith("REN ")) {
-                let args = inputText.slice(4).split(" ");
-                if (args.length === 2) {
-                    let oldName = args[0];
-                    let newName = args[1];
-
-                    let fileIndex = files.findIndex(file => file.filename === oldName);
-                    if (fileIndex !== -1) {
-                        files[fileIndex].filename = newName;
-                        saveFiles();
-                    } else {
-                    }
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            } else if (inputText.startsWith("TYPE ")) {
-                let fileName = inputText.slice(5);
-                let file = files.find(file => file.filename === fileName);
-                if (file) {
-                    commandOutput = file.content;
-                } else {
-                    commandOutput = "Bad command or file name";
-                }
-            }
-            else if (inputText.trim() === "") {
-                // Handle empty input
-            } else if (inFileCreation) {
-                let fileContent = inputText.trim();
-                let finalFile = `${currentFileName}.${currentFileType}`;
-
-                // Save the file content
-                files.push({
-                    "filename": finalFile,
-                    "content": fileContent
-                });
-
-                saveFiles();
-
-                inFileCreation = false;
-                commandOutput = ''; // File saved, no extra message
+            const favicon = document.getElementById('favicon');
+            
+            if (isDarkMode) {
+                favicon.href = darkModeFavicon;
             } else {
-                commandOutput = "Bad command or file name";
+                favicon.href = lightModeFavicon;
             }
-
-            // Output the command and result
-            if (inputText.trim() === "" || inputText.startsWith("REN ")) {
-                outputContainer.textContent += `A:> ${inputText}\n`;
-            } else {
-                outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
-            }
-
-            // Clear input and move cursor to end
-            userInput.innerText = '';
-            moveCursorToEnd();
-            event.preventDefault();
         }
-    });
-    document.addEventListener("click", function() {
-    // Check if it's not already focused
-    if (document.activeElement !== userInput) {
-        userInput.focus();  // Focus on the userInput element
-    }
-});
+        
+        setFaviconBasedOnTheme();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconBasedOnTheme);
 
+        // Load files from localStorage or use default files
+        let files = JSON.parse(localStorage.getItem("files")) || [
+            {"filename": "MSDOS.SYS", "content": "<system-code-placeholder>"},
+            {"filename": "IO.SYS", "content": "<system-code-placeholder>"},
+        ];
+
+        const userInput = document.getElementById("userInput");
+        const outputContainer = document.getElementById("output-container");
+
+        let inFileCreation = false;
+        let currentFileName = '';
+        let currentFileType = '';
+
+        // Save files to localStorage
+        function saveFiles() {
+            localStorage.setItem("files", JSON.stringify(files));
+        }
+
+        // Function to move cursor to the far right after every input
+        function moveCursorToEnd() {
+            const range = document.createRange();
+            const selection = window.getSelection();
+            range.selectNodeContents(userInput);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        // Convert input to uppercase as user types
+        userInput.addEventListener('input', function() {
+            userInput.innerText = userInput.innerText.toUpperCase();
+            moveCursorToEnd(); // Ensure the cursor stays at the end
+        });
+
+        userInput.addEventListener('keydown', function(event) {
+            // Detect Ctrl/Cmd + Z and insert ^Z into the input
+            if ((event.ctrlKey || event.metaKey) && event.key === "z") {
+                event.preventDefault(); // Prevent the default undo action
+                const cursorPosition = userInput.selectionStart;
+                const currentText = userInput.innerText;
+                const newText = currentText.slice(0, cursorPosition) + '^Z' + currentText.slice(cursorPosition);
+                userInput.innerText = newText;
+                userInput.selectionStart = userInput.selectionEnd = cursorPosition + 3; // Length of "^Z" is 3
+                moveCursorToEnd(); // Ensure the cursor moves to the end
+            } else if (event.key === "Backspace" || event.key === "Delete") {
+                const cursorPosition = userInput.selectionStart;
+                const currentText = userInput.innerText;
+
+                // Case 1: User is deleting after "^Z" (for Backspace)
+                if (cursorPosition < currentText.length && currentText.slice(cursorPosition, cursorPosition + 2) === "^Z") {
+                    event.preventDefault(); // Prevent default delete/backspace action
+                    const newText = currentText.slice(0, cursorPosition) + currentText.slice(cursorPosition + 2);
+                    userInput.innerText = newText;
+                    userInput.selectionStart = userInput.selectionEnd = cursorPosition;
+                    moveCursorToEnd(); // Ensure the cursor moves to the end
+                }
+                // Case 2: User is deleting before "^Z" (for Delete)
+                else if (cursorPosition >= 2 && currentText.slice(cursorPosition - 2, cursorPosition) === "^Z") {
+                    event.preventDefault(); // Prevent the default action of Backspace or Delete
+                    const newText = currentText.slice(0, cursorPosition - 2) + currentText.slice(cursorPosition);
+                    userInput.innerText = newText;
+                    userInput.selectionStart = userInput.selectionEnd = cursorPosition - 2;
+                    moveCursorToEnd(); // Ensure the cursor moves to the end
+                }
+            } else if (event.key === "Enter") {
+                let inputText = userInput.innerText.trim();
+                let commandOutput = '';
+
+                if (inputText === "DIR") {
+                    commandOutput = [
+                        "Directory of A has no label",
+                        "Directory of A:\\",
+                        ...files.map(file => file.filename)
+                    ].join("\n");
+                } else if (inputText.trim() === "") {
+                } else {
+                    commandOutput = "Bad command or file name";
+                }
+
+                // Output the command and result
+                if (inputText.trim() === "" || inputText.startsWith("REN ")) {
+                    outputContainer.textContent += `A:> ${inputText}\n`;
+                } else {
+                    outputContainer.textContent += `A:> ${inputText}\n${commandOutput}\n`;
+                }
+
+                // Clear input and move cursor to end
+                userInput.innerText = '';
+                moveCursorToEnd();
+                event.preventDefault();
+            }
+        });
+        document.addEventListener("click", function() {
+            // Check if it's not already focused
+            if (document.activeElement !== userInput) {
+                userInput.focus();  // Focus on the userInput element
+            }
+        });
     </script>
 </body>
 </html>
