@@ -20,7 +20,7 @@
 
         /* Apply font to the entire body or specific elements */
         * {
-            font-family: "Perfect DOS VGA 437";
+            font-family: "Perfect DOS VGA 437", monospace; /* Default font */
         }
 
         /* Output container style */
@@ -39,7 +39,12 @@
             display: inline-block;
             min-width: 100%;
             word-wrap: break-word;
-            font-family: 'Courier New', Courier, monospace; /* Change to Courier New for whitespace */
+            font-family: "Perfect DOS VGA 437", monospace; /* Ensure the same font during input */
+            white-space: pre-wrap; /* Ensures whitespace is respected */
+            background-color: transparent;
+            color: white;
+            border: none;
+            outline: none;
         }
 
         .black {
@@ -128,6 +133,7 @@
 
         // Convert input to uppercase as user types
         userInput.addEventListener('input', function() {
+            // Ensure that we don't modify spaces, so we handle the input as needed
             userInput.innerText = userInput.innerText.toUpperCase();
             moveCursorToEnd(); // Ensure the cursor stays at the end
         });
