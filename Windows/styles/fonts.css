@@ -8,5 +8,5 @@
     font-family: 'Font 437';
     font-style: normal;
     font-weight: normal;
-    src: local('Font 437'), url('font-437.ttf') format('ttf');
+    src: local('Font 437'), url('font-437[1].ttf') format('ttf');
 }
