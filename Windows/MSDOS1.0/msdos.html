@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link id="favicon" rel="icon" href="https://iili.io/207HCAu.png" type="image/png">
@@ -10,7 +10,6 @@
             font-weight: normal;
             src: local('Fixedsys 62'), url('https://example.com/fonts/Fixedsys62.woff') format('woff');
         }
-
         /* Ensure Perfect DOS VGA 437 font is correctly applied */
         @font-face {
             font-family: 'Perfect DOS VGA 437';
@@ -21,7 +20,7 @@
 
         /* Apply font to the entire body or specific elements */
         * {
-            font-family: "Perfect DOS VGA 437", "Fixedsys 62", monospace;
+            font-family: "Perfect DOS VGA 437";
         }
 
         /* Output container style */
@@ -40,6 +39,7 @@
             display: inline-block;
             min-width: 100%;
             word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace; /* Change to Courier New for whitespace */
         }
 
         .black {
@@ -190,6 +190,7 @@
                 event.preventDefault();
             }
         });
+
         document.addEventListener("click", function() {
             // Check if it's not already focused
             if (document.activeElement !== userInput) {
