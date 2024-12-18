@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "PxPlus IBM CGA";
+    src: url("https://yopokiq.github.io/Emulator/Windows/styles/PxPlus_IBM_CGA[1].ttf") format("truetype");
+}
+
 * {
     font-family: "PxPlus IBM CGA";
 }
